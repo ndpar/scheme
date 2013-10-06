@@ -58,14 +58,14 @@
 (my-sqrt-2 (square (+ 1e+30 1e+6))) ; still not working for big numbers
 
 ; Exercise 1.8, p.26
-(define (improve-2 guess x)
-  (/ (+ (* 2 guess) (/ x guess guess)) 3))
-
-(define (cbrt-iter prev guess x)
-  (if (good-enough-2? prev guess)
-      guess
-      (cbrt-iter guess (improve-2 guess x)
-                 x)))
-
+; Cube root
 (define (cbrt x)
-  (cbrt-iter 0.0 1.0 x))
+  (define (good-enough? prev guess)
+    (< (abs (- prev guess)) 0.001))
+  (define (improve guess)
+    (/ (+ (* 2 guess) (/ x guess guess)) 3))
+  (define (cbrt-iter prev guess)
+    (if (good-enough? prev guess)
+        guess
+        (cbrt-iter guess (improve guess))))
+  (cbrt-iter 0.0 1.0))
