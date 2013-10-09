@@ -69,3 +69,48 @@
         guess
         (cbrt-iter guess (improve guess))))
   (cbrt-iter 0.0 1.0))
+
+; Exercise 1.10, p.36
+; Ackermann's function
+(define (A x y)
+  (cond ((= y 0) 0)
+        ((= x 0) (* 2 y))
+        ((= y 1) 2)
+        (else (A (- x 1)
+                 (A x (- y 1))))))
+
+(= (A 1 10) 1024)
+(= (A 2 4) 65536 (A 3 3))
+
+; Exercise 1.11, p.42
+; Tree recursion vs linear iteration
+(define (f1 n)
+  (cond ((< n 3) n)
+        (else (+ (* 1 (f1 (- n 1)))
+                 (* 2 (f1 (- n 2)))
+                 (* 3 (f1 (- n 3)))))))
+
+(define (f2 n)
+  (define (iter a b c count)
+    (if (= count 0)
+        c
+        (iter (+ a (* 2 b) (* 3 c)) a b (- count 1))))
+  (iter 2 1 0 n))
+
+; Exercise 1.12, p.42
+; Pascal's triangle
+(define (pascal m n)
+  (if (or (= n 1) (= m n))
+      1
+      (+ (pascal (- m 1) (- n 1))
+         (pascal (- m 1) n))))
+
+; Exercise 1.15, p.44
+(define (cube x) (* x x x))
+(define (p x)
+  (display " *** ")
+  (- (* 3 x) (* 4 (cube x))))
+(define (sine angle)
+  (if (not (> (abs angle) 0.1))
+      angle
+      (p (sine (/ angle 3.0)))))
