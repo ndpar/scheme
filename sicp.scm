@@ -114,3 +114,35 @@
   (if (not (> (abs angle) 0.1))
       angle
       (p (sine (/ angle 3.0)))))
+
+; Exercise 1.16, p.46
+; Iterative exponentiation by successive squaring
+; Time complexity Θ(log n), space Θ(1)
+(define (expt x n)
+  (define (iter a x n)
+    (cond ((= n 0) a)
+          ((even? n) (iter a (* x x) (/ n 2)))
+          (else (iter (* a x) x (- n 1)))))
+  (iter 1 x n))
+
+; Exercise 1.17, p.46
+; Recursive multiplication by successive doubling
+; Time and space complexity Θ(log n)
+(define (double n) (+ n n))
+(define (halve n) (quotient n 2))
+
+(define (recur-mult m n)
+  (cond ((= n 0) 0)
+        ((= n 1) m)
+        ((even? n) (recur-mult (double m) (halve n)))
+        (else (+ m (recur-mult m (- n 1))))))
+
+; Exercise 1.18, p.47
+; Iterative multiplication by successive doubling
+; Time complexity Θ(log n), space Θ(1)
+(define (russian m n)
+  (define (iter a m n)
+    (cond ((= n 0) a)
+          ((even? n) (iter a (double m) (halve n)))
+          (else (iter (+ a m) m (- n 1)))))
+  (iter 0 m n))
