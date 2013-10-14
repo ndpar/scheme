@@ -9,8 +9,8 @@
   (+ (square x) (square y)))
 
 ; Exercise 1.2, p.21
-(/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
-   (* 3 (- 6 2) (- 2 7)))
+;(/ (+ 5 4 (- 2 (- 3 (+ 6 (/ 4 5)))))
+;   (* 3 (- 6 2) (- 2 7)))
 
 ; Exercise 1.3, p.21
 (define (sicp-1-3 x y z)
@@ -38,9 +38,9 @@
   (sqrt-iter 1.0 x))
 
 ; Exercise 1.7, p.25
-(sqrt (square 0.01))
-(my-sqrt (square 0.01))
-(my-sqrt (square (+ 1e+30 1e+6)))
+;(sqrt (square 0.01))
+;(my-sqrt (square 0.01))
+;(my-sqrt (square (+ 1e+30 1e+6)))
 
 (define (good-enough-2? prev guess)
   (< (abs (- prev guess)) 0.001))
@@ -54,8 +54,8 @@
 (define (my-sqrt-2 x)
   (sqrt-iter-2 0.0 1.0 x))
 
-(my-sqrt-2 (square 0.01)) ; works now for small numbers
-(my-sqrt-2 (square (+ 1e+30 1e+6))) ; still not working for big numbers
+;(my-sqrt-2 (square 0.01)) ; works now for small numbers
+;(my-sqrt-2 (square (+ 1e+30 1e+6))) ; still not working for big numbers
 
 ; Exercise 1.8, p.26
 ; Cube root
@@ -79,8 +79,8 @@
         (else (A (- x 1)
                  (A x (- y 1))))))
 
-(= (A 1 10) 1024)
-(= (A 2 4) 65536 (A 3 3))
+;(= (A 1 10) 1024)
+;(= (A 2 4) 65536 (A 3 3))
 
 ; Exercise 1.11, p.42
 ; Tree recursion vs linear iteration
