@@ -146,3 +146,92 @@
           ((even? n) (iter a (double m) (halve n)))
           (else (iter (+ a m) m (- n 1)))))
   (iter 0 m n))
+
+; p.50
+; Deterministic primality test
+; Time complexity: Θ(√n)
+(define (smallest-divisor n)
+  (find-divisor n 2))
+
+(define (find-divisor n test-divisor)
+  (define (next td)
+;    (if (= td 2) 3 (+ td 2))) ; Exercise 1.23, p.54
+    (+ td 1))
+  (cond ((> (square test-divisor) n) n)
+        ((divides? test-divisor n) test-divisor)
+        (else (find-divisor n (next test-divisor)))))
+
+(define (divides? a b)
+  (= (remainder b a) 0))
+
+(define (prime? n)
+  (= (smallest-divisor n) n))
+
+; p.51
+; Probabilistic primality test
+; Time complexity: Θ(log n)
+(define (expmod base exp m)
+  (cond ((= exp 0) 1)
+        ((even? exp)
+         (remainder (square (expmod base (/ exp 2) m))
+                    m))
+        (else
+         (remainder (* base (expmod base (- exp 1) m))
+                    m))))
+
+(define (fermat-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (try-it (+ 1 (random (- n 1)))))
+
+(define (fast-prime? n times)
+  (cond ((= times 0) true)
+        ((fermat-test n) (fast-prime? n (- times 1)))
+        (else false)))
+
+; Exercise 1.22, p.54
+; Primality tests: order of growth
+(define (search-for-primes n count)
+  (cond ((= count 0) (newline) (display "done"))
+        ((even? n) (search-for-primes (+ n 1) count))
+;        ((fast-prime? n 3) (timed-prime-test n) ; Exercise 1.24, p.55
+        ((prime? n) (timed-prime-test n)
+                    (search-for-primes (+ n 2) (- count 1)))
+        (else (search-for-primes (+ n 2) count))))
+
+(define (timed-prime-test n)
+  (newline)
+  (display n)
+  (start-prime-test n (current-inexact-milliseconds)))
+
+(define (start-prime-test n start-time)
+;  (cond ((fast-prime? n 3) ; Exercise 1.24, p.55
+  (cond ((prime? n)
+         (report-prime (- (current-inexact-milliseconds) start-time)))))
+
+(define (report-prime elapsed-time)
+  (display " ** ")
+  (display elapsed-time))
+
+;(timed-prime-test 37) ; to warm interpreter
+;(timed-prime-test 1009)
+;(timed-prime-test 10007)
+;(timed-prime-test 100003)
+;(timed-prime-test 1000003)
+
+; Exercise 1.27, p.55
+(define (carmichael-test n)
+  (define (try-it a)
+    (= (expmod a n n) a))
+  (define (iter a prod)
+    (if (= 1 a)
+        prod
+        (iter (- a 1) (and (try-it a) prod))))
+  (iter (- n 1) #t))
+
+;(carmichael-test 561)
+;(carmichael-test 1105)
+;(carmichael-test 1729)
+;(carmichael-test 2465)
+;(carmichael-test 2821)
+;(carmichael-test 6601)
