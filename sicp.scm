@@ -165,7 +165,8 @@
   (= (remainder b a) 0))
 
 (define (prime? n)
-  (= (smallest-divisor n) n))
+  (and (> n 1)
+       (= (smallest-divisor n) n)))
 
 ; p.51
 ; Probabilistic primality test
@@ -235,3 +236,101 @@
 ;(carmichael-test 2465)
 ;(carmichael-test 2821)
 ;(carmichael-test 6601)
+
+; Exercise 1.29, p.60
+; Simpson's rule for numerical integration
+; N must be even
+(define (inc n) (+ n 1))
+
+(define (dec n) (- n 1))
+
+(define (integral f a b n)
+  (let ([h (/ (- b a) n)])
+    (define (y k)
+      (f (+ a (* k h))))
+    (define (coef k)
+      (cond ((or (= k 0) (= k n)) 1)
+            ((odd? k) 4)
+            ((even? k) 2)))
+    (define (term k)
+      (* (coef k) (y k)))
+    (* (/ h 3) (sum term 0 inc n))))
+
+; (integral cube 0 1 100)
+; (integral cube 0 1 1000)
+
+; (integral cube 0.0 1.0 100)
+; (integral cube 0.0 1.0 1000)
+
+; Exercise 1.30, p.60
+; Itirative summation
+(define (sum term a next b)
+  (define (iter i result)
+    (if (> i b)
+        result
+        (iter (next i) (+ (term i) result))))
+  (iter a 0))
+
+; Exercise 1.31, p.60
+; Recursive product
+(define (prod-rec factor a next b)
+  (if (> a b)
+      1
+      (* (factor a)
+         (prod-rec factor (next a) next b))))
+
+; Iterative product
+(define (product factor a next b)
+  (define (iter i result)
+    (if (> i b)
+        result
+        (iter (next i) (* (factor i) result))))
+  (iter a 1))
+
+(define (factorial n)
+  (product identity 1 inc n))
+
+(define (π/4 iter)
+  (define (π-factor i)
+    (* 1.0 (dec i) (inc i) (/ (square i))))
+  (define (π-next i)
+    (+ i 2))
+  (product π-factor 3 π-next iter))
+
+; Exercise 1.32, p.61
+; Recursive accumulator
+(define (accumulate-rec combiner null-value term a next b)
+  (if (> a b)
+      null-value
+      (combiner (term a)
+                (accumulate-rec combiner null-value term (next a) next b))))
+
+; Iterative accumulator
+(define (accumulate combiner null-value term a next b)
+  (define (iter i result)
+    (if (> i b)
+        result
+        (iter (next i) (combiner (term i) result))))
+    (iter a null-value))
+
+(define (sum-acc term a next b)
+  (accumulate + 0 term a next b))
+
+(define (prod-acc term a next b)
+  (accumulate * 1 term a next b))
+
+; Exercise 1.33, p.61
+(define (filtered-accumulate combiner null-value pred term a next b)
+  (define (iter i result)
+    (cond ((> i b) result)
+          ((pred i) (iter (next i) (combiner (term i) result)))
+          (else (iter (next i) result))))
+  (iter a null-value))
+
+(define (square-primes a b)
+  (filtered-accumulate + 0 prime? square a inc b))
+
+(define (rel-prime-prod n)
+  (define (rel-prime? i)
+    (= (gcd i n) 1))
+  (filtered-accumulate * 1 rel-prime? identity 1 inc (dec n)))
